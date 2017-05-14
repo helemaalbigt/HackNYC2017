@@ -62,12 +62,12 @@ public class AndroidIntentReceiver : MonoBehaviour {
 			AndroidJavaObject fileOutputStream = new AndroidJavaObject("java.io.FileOutputStream", targetFile);
 
 			int availableBytes = inputStream.Call<int>("available");
-			byte[] csBuffer = new byte[availableBytes];
+			//byte[] csBuffer = new byte[availableBytes];
 
-			AndroidJavaObject buffer = javaByteArrayFromCS (csBuffer);
+			//AndroidJavaObject buffer = javaByteArrayFromCS (csBuffer);
 			Debug.Log ("creating byte array of size " + availableBytes);
 
-			//byte[] buffer = new byte[availableBytes];
+			byte[] buffer = new byte[availableBytes];
 
 			//System.IntPtr byteArrayPtr = AndroidJNIHelper.ConvertToJNIArray (csBuffer);
 			//jvalue[] buffer = new jvalue[1];
@@ -88,15 +88,23 @@ public class AndroidIntentReceiver : MonoBehaviour {
 			Debug.Log("array length after creation " + arrayLength);
 
 			//inputStream.read(buffer);
-			int bytesRead = inputStream.Call<int>("read", buffer);
+			//int bytesRead = inputStream.Call<int>("read", buffer);
 
-			Debug.Log ("read " + bytesRead + " bytes");
+			//Debug.Log ("read " + bytesRead + " bytes");
 
 			//fileOutputStream.write(buffer);
-			fileOutputStream.Call("write", buffer);
+			//fileOutputStream.Call("write", buffer);
+
+			//need to loop to ensure writing all bytes
+			int lengthRead = inputStream.Call<int>("read", buffer);
+			while (lengthRead > 0) {
+				Debug.Log ("lengthRead " + lengthRead);
+				fileOutputStream.Call ("write", buffer, 0, lengthRead);
+			}
 
 			//close streams
 			inputStream.Call("close");
+			fileOutputStream.Call ("flush");
 			fileOutputStream.Call ("close");
 			inputFileDesc.Call ("close");
 
