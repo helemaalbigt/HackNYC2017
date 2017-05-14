@@ -29,13 +29,15 @@ public class SnapScreen : MonoBehaviour {
         _videoPlayer.prepareCompleted += Play;
 
         _videoPlayer.skipOnDrop = true;
-        fullPath = filePath + "snapmemory1.mp4";
+        fullPath = filePath + "snapmemory4.mp4";
         Debug.Log("FILEPATH => " + fullPath);
-        _videoPlayer.url = fullPath;//"file:/" + 
-        _videoPlayer.Prepare();
+        //_videoPlayer.url = fullPath;//"file:/" + 
+        //_videoPlayer.Prepare();
     }
 
     private void Update() {
+		if (_videoPlayer.isPrepared && !_videoPlayer.isPlaying)
+			Play ();
 
     }
 
