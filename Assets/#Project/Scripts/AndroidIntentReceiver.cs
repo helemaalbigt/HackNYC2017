@@ -6,6 +6,7 @@ public class AndroidIntentReceiver : MonoBehaviour {
 
 	void Awake(){
 		Debug.Log ("AWAKE");
+
 		string arguments = "";
 
 		AndroidJavaClass UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"); 
@@ -60,22 +61,19 @@ public class AndroidIntentReceiver : MonoBehaviour {
 			//FileOutputStream fileOutputStream = new FileOutputStream(targetFile);
 			AndroidJavaObject fileOutputStream = new AndroidJavaObject("java.io.FileOutputStream", targetFile);
 
-			//byte[] buffer = new byte[inputStream.available()];
 			int availableBytes = inputStream.Call<int>("available");
-			//javaByteArrayFromCS (availableBytes);
+			byte[] csBuffer = new byte[availableBytes];
 
+			AndroidJavaObject buffer = javaByteArrayFromCS (csBuffer);
 			Debug.Log ("creating byte array of size " + availableBytes);
 
-			byte[] buffer = new byte[availableBytes];
-
-			Debug.Log ("created cs buffer of size " + buffer.Length);
-
+			//byte[] buffer = new byte[availableBytes];
 
 			//System.IntPtr byteArrayPtr = AndroidJNIHelper.ConvertToJNIArray (csBuffer);
 			//jvalue[] buffer = new jvalue[1];
 			//buffer [0].l = byteArrayPtr;
 
-			//AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
+			AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
 			//AndroidJavaObject buffer = arrayClass.CallStatic<AndroidJavaObject>("newInstance", new AndroidJavaClass("java.lang.Byte"), availableBytes);
 
 			//initialize to all 0s
@@ -83,9 +81,11 @@ public class AndroidIntentReceiver : MonoBehaviour {
 				arrayClass.CallStatic("set", arrayObject, i, new AndroidJavaObject("java.lang.Byte", 0));
 			}*/
 
-			//int arrayLength = arrayClass.CallStatic<int>("getLength", buffer);
 
-			//Debug.Log("array length after creation " + arrayLength);
+
+			int arrayLength = arrayClass.CallStatic<int>("getLength", buffer);
+
+			Debug.Log("array length after creation " + arrayLength);
 
 			//inputStream.read(buffer);
 			int bytesRead = inputStream.Call<int>("read", buffer);
@@ -146,13 +146,23 @@ public class AndroidIntentReceiver : MonoBehaviour {
 
 	}
 
-	private AndroidJavaObject javaByteArrayFromCS(int size) {
-		Debug.Log ("creating byte array of size " + size);
+	private AndroidJavaObject javaByteArrayFromCS(byte[] values) {
+		Debug.Log ("creating byte array of size " + values.Length);
+		//AndroidJavaObject defaultByte = new AndroidJavaObject ("java.lang.Byte");
+		//AndroidJavaObject defaultByte = byteClass.GetStatic<AndroidJavaObject> ("MIN_VALUE");
 		AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
 		AndroidJavaObject arrayObject = arrayClass.CallStatic<AndroidJavaObject>("newInstance",
-			new AndroidJavaClass("java.lang.Byte"),
-			size);
+										new AndroidJavaClass("java.lang.Byte"),
+										values.Length);
 
+		Debug.Log ("fill er up");
+		for (int i=0; i<values.Length; ++i) {
+			Debug.Log ("filling up #" + i);
+			byte csDefaultByte = 0x20;
+			AndroidJavaObject defaultByte = new AndroidJavaObject("java.lang.Byte", csDefaultByte);
+			arrayClass.CallStatic("setByte", arrayObject, i, defaultByte);
+		}
+		Debug.Log ("done filling");
 		return arrayObject;
 	}
 
