@@ -65,21 +65,32 @@ public class AndroidIntentReceiver : MonoBehaviour {
 			//javaByteArrayFromCS (availableBytes);
 
 			Debug.Log ("creating byte array of size " + availableBytes);
-			AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
-			AndroidJavaObject arrayObject = arrayClass.CallStatic<AndroidJavaObject>("newInstance", new AndroidJavaClass("java.lang.Byte"), availableBytes);
+
+			byte[] buffer = new byte[availableBytes];
+
+			Debug.Log ("created cs buffer of size " + buffer.Length);
+
+
+			//System.IntPtr byteArrayPtr = AndroidJNIHelper.ConvertToJNIArray (csBuffer);
+			//jvalue[] buffer = new jvalue[1];
+			//buffer [0].l = byteArrayPtr;
+
+			//AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
+			//AndroidJavaObject buffer = arrayClass.CallStatic<AndroidJavaObject>("newInstance", new AndroidJavaClass("java.lang.Byte"), availableBytes);
 
 			//initialize to all 0s
-			for (int i=0; i< availableBytes; ++i) {
+			/*for (int i=0; i< availableBytes; ++i) {
 				arrayClass.CallStatic("set", arrayObject, i, new AndroidJavaObject("java.lang.Byte", 0));
-			}
+			}*/
 
-			AndroidJavaObject buffer = arrayObject;
-			int arrayLength = arrayObject.CallStatic<int>("length");
+			//int arrayLength = arrayClass.CallStatic<int>("getLength", buffer);
 
-			Debug.Log("array length after creation " + arrayLength);
+			//Debug.Log("array length after creation " + arrayLength);
 
 			//inputStream.read(buffer);
-			inputStream.Call<int>("read", buffer);
+			int bytesRead = inputStream.Call<int>("read", buffer);
+
+			Debug.Log ("read " + bytesRead + " bytes");
 
 			//fileOutputStream.write(buffer);
 			fileOutputStream.Call("write", buffer);
