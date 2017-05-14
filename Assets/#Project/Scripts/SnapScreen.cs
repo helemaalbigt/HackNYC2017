@@ -19,14 +19,14 @@ public class SnapScreen : MonoBehaviour {
         if (Application.isEditor) {
             filePath = "./" + Application.dataPath + "/Resources/";           
         } else {
-            filePath = "./files/Resources/";//Application.persistentDataPath + " / Resources/"
+			filePath = "file:///storage/emulated/0/Snapchat/";
         }
 
         _videoPlayer.loopPointReached += Play;
         _videoPlayer.prepareCompleted += Play;
 
         _videoPlayer.skipOnDrop = true;
-        fullPath = filePath + "video.mp4";
+        fullPath = filePath + "snapmemory1.mp4";
         Debug.Log("FILEPATH => " + fullPath);
         _videoPlayer.url = fullPath;//"file:/" + 
         _videoPlayer.Prepare();
@@ -34,8 +34,8 @@ public class SnapScreen : MonoBehaviour {
     }
 
     private void Update() {
-        // Debug.Log("is playing: " + _videoPlayer.isPlaying + " is prepared: " + _videoPlayer.isPrepared);
-        
+         //Debug.Log("is playing: " + _videoPlayer.isPlaying + " is prepared: " + _videoPlayer.isPrepared);
+
     }
 
     public void SetVideo(VideoClip clip) {
