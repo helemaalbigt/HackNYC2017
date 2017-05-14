@@ -17,17 +17,18 @@ public class SnapScreen : MonoBehaviour {
     void Start () {
 
         if (Application.isEditor) {
-            filePath = Application.dataPath + "/Resources/";           
+            filePath = "./" + Application.dataPath + "/Resources/";           
         } else {
-            filePath = Application.persistentDataPath + "/Resources/";
+            filePath = "./files/Resources/";//Application.persistentDataPath + " / Resources/"
         }
 
         _videoPlayer.loopPointReached += Play;
         _videoPlayer.prepareCompleted += Play;
+
         _videoPlayer.skipOnDrop = true;
         fullPath = filePath + "video.mp4";
         Debug.Log("FILEPATH => " + fullPath);
-        //_videoPlayer.url = fullPath;//"file:/" + 
+        _videoPlayer.url = fullPath;//"file:/" + 
         _videoPlayer.Prepare();
         
     }
